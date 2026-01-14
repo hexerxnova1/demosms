@@ -39,8 +39,8 @@ async function startProcess() {
 
             display.innerText = "Sent: " + i;
             
-            // ৫টি এসএমএস নিশ্চিত করতে বিরতি বাড়ানো হয়েছে (৬ সেকেন্ড)
-            await new Promise(res => setTimeout(res, 6000)); 
+            // ৫টি এসএমএস নিশ্চিত করতে বিরতি বাড়ানো হয়েছে (৫ সেকেন্ড)
+            await new Promise(res => setTimeout(res, 5000)); 
             
         } catch (e) {
             console.log("Error in attempt " + i);
