@@ -38,7 +38,6 @@ async function startProcess() {
     // আপনার কনফার্ম করা ১ ও ২ নম্বর এপিআই
     const apiList = [
         `https://api.medeasy.health/api/send-otp/+88${target}/`,
-        `https://bikroy.com/data/phone_number_login/verifications/phone_login?phone=${target}`
     ];
 
     for (let i = 1; i <= count; i++) {
