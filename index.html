@@ -247,11 +247,9 @@
         await delay(1000); 
       }
 }
-
-    spinner.style.display = 'none';
+spinner.style.display = 'none';
 
     if (successCount > 0) {
-        // ৩ নম্বর জায়গায় সবুজ রেজাল্ট আসবে
         responseMessage.innerHTML = `<span class="alert success">Attack Complete! (${successCount} Hits)</span>`;
         if (typeof sound !== 'undefined') sound.play();
     } else {
