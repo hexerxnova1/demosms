@@ -247,17 +247,15 @@
         await delay(1000); 
       }
 
-      timerDisplay.innerText = "Attack Finished!";
-      spinner.style.display = 'none';
+spinner.style.display = 'none';
 
-      if (successCount > 0) {
+    if (successCount > 0) {
         responseMessage.innerHTML = `<span class="alert success">Attack Complete! (${successCount} Hits)</span>`;
         if (typeof sound !== 'undefined') sound.play();
-      } else {
+    } else {
         responseMessage.innerHTML = `<span class="alert failure">Attack Failed!</span>`;
-      }
     }
-
+}
     // Matrix Rain Animation
     const canvas = document.getElementById('matrixCanvas');
     const ctx = canvas.getContext('2d');
