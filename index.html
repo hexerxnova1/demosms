@@ -169,7 +169,6 @@
         return;
       }
 
-      // ২০টির লিমিট চেক
       if (amount > 20) {
         responseMessage.innerHTML = '<span class="alert failure">Error: Maximum limit is 20!</span>';
         return;
@@ -240,14 +239,13 @@
           if (result) successCount++;
         }
 
-        // লাল প্রগ্রেস বার আপডেট
         let progress = ((i + 1) / amount) * 100;
         progressBar.style.width = progress + '%';
-        
         await delay(1000); 
       }
 
-      timerDisplay.innerText = "Attack Finished!";
+      // ১ নম্বর জায়গা ক্লিয়ার এবং সাকসেস মেসেজ (৩ নম্বর)
+      timerDisplay.innerText = ""; 
       spinner.style.display = 'none';
 
       if (successCount > 0) {
@@ -282,6 +280,7 @@
       }
     }
     setInterval(draw, 35);
+
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
