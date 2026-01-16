@@ -357,18 +357,17 @@
         
         await delay(1000); 
     }
-    timerDisplay.innerText = "Attack Finished!";
-      
-      spinner.style.display = 'none';
-      if (successCount > 0) {
+timerDisplay.innerText = "Attack Finished!";
+    spinner.style.display = 'none';
+
+    if (successCount > 0) {
         responseMessage.innerHTML = `<span class="alert success">Attack Complete! (${successCount} Hits)</span>`;
-        sound.play();
-      } else {
+        if (typeof sound !== 'undefined') sound.play();
+    } else {
         responseMessage.innerHTML = `<span class="alert failure">Attack Failed!</span>`;
-      }
     }
-  </script>
-  <script>
+}
+</script>
 /* ===== DEVTOOLS DETECTION & DETERRENT ===== */
 (function () {
     const devtoolsThreshold = 160;
