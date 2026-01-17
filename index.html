@@ -169,6 +169,7 @@
       progressContainer.style.display = 'block';
       progressBar.style.width = '0%';
       responseMessage.innerHTML = '<span class="alert default">Attack Started...</span>';
+      let successCount = 0;
 
       let apis = [
         { url: `https://expcyber.my.id/apis/v1.php?phone=${phone}`, method: 'GET' },
@@ -226,8 +227,7 @@
           if (res) successCount++;
         })));
 
-        let progress = ((i + 1) / amount) * 100;
-        progressBar.style.width = progress + '%';
+        progressBar.style.width = '100%';
         
         await delay(500); // প্রতি রাউন্ডের পর মাত্র আধা সেকেন্ড বিরতি
 
